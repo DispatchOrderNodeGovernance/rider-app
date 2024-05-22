@@ -1,87 +1,77 @@
-import React, { useState, useEffect, useRef } from 'react';
-
-// Haversine formula to calculate the distance between two coordinates
-const getDistanceFromLatLonInMeters = (lat1, lon1, lat2, lon2) => {
-  const R = 6371000; // Radius of the Earth in meters
-  const dLat = (lat2 - lat1) * (Math.PI / 180);
-  const dLon = (lon2 - lon1) * (Math.PI / 180);
-  const a = 
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * 
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c; // Distance in meters
-  return distance;
-};
+import React, { useState, useEffect } from 'react';
 
 const LocationTracker = () => {
-  const [position, setPosition] = useState(null);
+  const [position, setPosition] = useState({ lat: null, lng: null });
+  const [lastTracked, setLastTracked] = useState(null);
   const [error, setError] = useState(null);
-  const initialPosition = useRef(null);
+  const [previousPosition, setPreviousPosition] = useState(null);
+  const [movedMeters, setMovedMeters] = useState(0);
 
   useEffect(() => {
     const handleSuccess = (pos) => {
-      const { latitude, longitude } = pos.coords;
+      const coords = pos.coords;
+      const currentPosition = { lat: coords.latitude, lng: coords.longitude };
+      const currentTime = new Date().toLocaleTimeString();
 
-      if (!initialPosition.current) {
-        initialPosition.current = { latitude, longitude };
-        setPosition({ latitude, longitude });
-        return;
+      // Check if the user has moved 100 meters
+      if (previousPosition) {
+        const distance = calculateDistance(
+          previousPosition.lat,
+          previousPosition.lng,
+          currentPosition.lat,
+          currentPosition.lng
+        );
+        setMovedMeters(distance);
+        if (distance >= 10) {
+          alert('You have moved 10 meters');
+        }
       }
 
-      const distance = getDistanceFromLatLonInMeters(
-        initialPosition.current.latitude,
-        initialPosition.current.longitude,
-        latitude,
-        longitude
-      );
-
-      if (distance >= 100) {
-        alert('Moved 100 meters. Sending location to server...');
-        sendLocationToServer({ latitude, longitude });
-        initialPosition.current = { latitude, longitude };
-      }
+      setPreviousPosition(currentPosition);
+      setPosition(currentPosition);
+      setLastTracked(currentTime);
     };
 
     const handleError = (err) => {
-      const errorMessage = `ERROR(${err.code}): ${err.message}`;
-      console.warn(errorMessage);
-      setError(errorMessage);
+      setError(err.message);
     };
 
-    const checkPosition = () => {
-      if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
+
+    const watchIntervalId = setInterval(() => {
         navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
-      } else {
-        const errorMessage = 'Geolocation is not supported by this browser.';
-        alert(errorMessage);
-        setError(errorMessage);
-      }
-    };
+    }, 2000);
 
-    const intervalId = setInterval(checkPosition, 5000); // Check position every 5 seconds
-    checkPosition();
-
-    return () => clearInterval(intervalId);
+    return () => { clearInterval(watchIntervalId); }
   }, []);
 
-  const sendLocationToServer = (location) => {
-    // Placeholder function to send location to the server
-    console.log('Sending location to server:', location);
+  const calculateDistance = (lat1, lng1, lat2, lng2) => {
+    const R = 6371000; // Radius of the Earth in meters
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+    return distance;
   };
 
   return (
     <div>
       <h1>Location Tracker</h1>
-      {position ? (
-        <p>
-          Current Position: Latitude {position.latitude}, Longitude {position.longitude}
-        </p>
+      {error ? (
+        <p>Error: {error}</p>
       ) : (
-        <p>Acquiring position...</p>
-      )}
-      {error && (
-        <p style={{color: 'red'}}>{error}</p>
+        <>
+          <p>Latitude: {position.lat}</p>
+          <p>Longitude: {position.lng}</p>
+          <p>Last Tracked: {lastTracked}</p>
+          <p>Moved: {movedMeters} meters</p>
+        </>
       )}
     </div>
   );
