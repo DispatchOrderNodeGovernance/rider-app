@@ -65,7 +65,11 @@ const LocationTracker = () => {
 
             if (distance >= 100) {
                 alert('Moved 100 meters. Sending location to server...');
-                sendLocationToServer({ latitude, longitude });
+                sendLocationToServer({
+                    "driver_id": "driver_123",
+                    "status": "in_trip",
+                    latitude, longitude
+                });
                 initialPosition.current = { latitude, longitude };
             }
         };
@@ -120,11 +124,11 @@ const LocationTracker = () => {
                 <p style={{ color: 'red' }}>{error}</p>
             )}
             <div>
-                <input 
-                    type="text" 
-                    defaultValue={inputUrl.current} 
-                    onChange={handleUrlChange} 
-                    placeholder="Enter service URL" 
+                <input
+                    type="text"
+                    defaultValue={inputUrl.current}
+                    onChange={handleUrlChange}
+                    placeholder="Enter service URL"
                 />
                 <button onClick={handleSetUrl}>Set URL</button>
                 <button onClick={handleSetDefaultUrl}>Set Default URL</button>
