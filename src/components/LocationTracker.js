@@ -5,7 +5,6 @@ const LocationTracker = () => {
   const [lastTracked, setLastTracked] = useState(null);
   const [error, setError] = useState(null);
   const [previousPosition, setPreviousPosition] = useState(null);
-  const [movedMeters, setMovedMeters] = useState(0);
 
   useEffect(() => {
     const handleSuccess = (pos) => {
@@ -21,9 +20,8 @@ const LocationTracker = () => {
           currentPosition.lat,
           currentPosition.lng
         );
-        setMovedMeters(distance);
-        if (distance >= 10) {
-          alert('You have moved 10 meters');
+        if (distance >= 100) {
+          alert('You have moved 100 meters.');
         }
       }
 
@@ -38,11 +36,15 @@ const LocationTracker = () => {
 
     navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
 
-    const watchIntervalId = setInterval(() => {
-        navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
-    }, 2000);
+    const watchId = navigator.geolocation.watchPosition(handleSuccess, handleError, {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 5000,
+    });
 
-    return () => { clearInterval(watchIntervalId); }
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
   }, []);
 
   const calculateDistance = (lat1, lng1, lat2, lng2) => {
@@ -70,7 +72,6 @@ const LocationTracker = () => {
           <p>Latitude: {position.lat}</p>
           <p>Longitude: {position.lng}</p>
           <p>Last Tracked: {lastTracked}</p>
-          <p>Moved: {movedMeters} meters</p>
         </>
       )}
     </div>
