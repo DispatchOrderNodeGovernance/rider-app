@@ -19,6 +19,7 @@ const LocationTracker = () => {
     const [lastTracked, setLastTracked] = useState(null);
     const [error, setError] = useState(null);
     const initialPosition = useRef(null);
+    const [distance, setDistance] = useState(0);
 
     useEffect(() => {
         const handleSuccess = (pos) => {
@@ -37,6 +38,7 @@ const LocationTracker = () => {
                 latitude,
                 longitude
             );
+            setDistance(distance);
 
             if (distance >= 100) {
                 alert('Moved 100 meters. Sending location to server...');
@@ -78,7 +80,8 @@ const LocationTracker = () => {
             {position ? (
                 <p>
                     Current Position: Latitude {position.latitude}, Longitude {position.longitude}<br />
-                    Last tracked: {lastTracked}
+                    Last tracked: {lastTracked} <br />
+                    Distance from initial position: {distance} meters
                 </p>
             ) : (
                 <p>Acquiring position...</p>
