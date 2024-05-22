@@ -43,20 +43,6 @@ function App() {
       }
     };
     setData(payload);
-    fetch('https://api.grab.com/v1/ride', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
   }, []);
   return (
     <div className="App">
@@ -73,7 +59,6 @@ function App() {
         >
           Learn React
         </a>
-        {data && <div>{JSON.stringify(data)}</div>}
       </header>
     </div>
   );
