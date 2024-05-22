@@ -20,7 +20,30 @@ const LocationTracker = () => {
     const [error, setError] = useState(null);
     const initialPosition = useRef(null);
     const [distance, setDistance] = useState(0);
+    const serviceUrl = useRef('https://0xyshn92yf.execute-api.ap-southeast-1.amazonaws.com/production_stage/locations');
+    const inputUrl = useRef('');
 
+    const sendLocationToServer = async (location) => {
+        try {
+            const response = await fetch(serviceUrl.current, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(location)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server responded with status ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Location sent successfully:', data);
+        } catch (error) {
+            console.error('Error sending location to server:', error);
+            setError(`Error sending location: ${error.message}`);
+        }
+    };
     useEffect(() => {
         const handleSuccess = (pos) => {
             setLastTracked(new Date().toLocaleString());
@@ -69,9 +92,16 @@ const LocationTracker = () => {
         return () => clearInterval(intervalId);
     }, []);
 
-    const sendLocationToServer = (location) => {
-        // Placeholder function to send location to the server
-        console.log('Sending location to server:', location);
+    const handleUrlChange = (e) => {
+        inputUrl.current = e.target.value;
+    };
+
+    const handleSetUrl = () => {
+        serviceUrl.current = inputUrl.current;
+    };
+
+    const handleSetDefaultUrl = () => {
+        serviceUrl.current = 'https://0xyshn92yf.execute-api.ap-southeast-1.amazonaws.com/production_stage/locations';
     };
 
     return (
@@ -89,6 +119,16 @@ const LocationTracker = () => {
             {error && (
                 <p style={{ color: 'red' }}>{error}</p>
             )}
+            <div>
+                <input 
+                    type="text" 
+                    defaultValue={inputUrl.current} 
+                    onChange={handleUrlChange} 
+                    placeholder="Enter service URL" 
+                />
+                <button onClick={handleSetUrl}>Set URL</button>
+                <button onClick={handleSetDefaultUrl}>Set Default URL</button>
+            </div>
         </div>
     );
 };
