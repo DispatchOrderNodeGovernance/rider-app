@@ -52,6 +52,13 @@ const LocationTracker = () => {
             if (!initialPosition.current) {
                 initialPosition.current = { latitude, longitude };
                 setPosition({ latitude, longitude });
+                // Send the initial position to the server immediately
+                sendLocationToServer({
+                    "driver_id": "driver_123",
+                    "status": "in_trip",
+                    latitude, longitude
+                });
+
                 return;
             }
 
