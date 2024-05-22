@@ -38,7 +38,7 @@ function App() {
             "https://api1.grab.com/notification",
             "https://api2.grab.com/notification"
           ],
-          "timeoutAfter": 30
+          "timeoutAfter":  30
         }
       }
     };
