@@ -1,46 +1,20 @@
 import logo from './logo.svg';
 import './App.css';
 import { useEffect, useState } from 'react';
+import LocationTracker from './components/LocationTracker';
 function App() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState({
+    "currentLocation": {
+      "latitude": 0,
+      "longitude": 0
+    },
+  });
   useEffect(() => {
     let payload = {
       "currentLocation": {
         "latitude": 10.776889,
         "longitude": 106.700806
       },
-      "vehicleType": "Car",
-      "numPassengers": 2,
-      "services": {
-        "rideMatching": {
-          "endpoints": [
-            "https://api1.grab.com/ride-matching",
-            "https://api2.grab.com/ride-matching"
-          ],
-          "timeoutAfter": 30
-        },
-        "location": {
-          "endpoints": [
-            "https://api1.grab.com/location",
-            "https://api2.grab.com/location"
-          ],
-          "timeoutAfter": 30
-        },
-        "tripManagement": {
-          "endpoints": [
-            "https://api1.grab.com/trip-management",
-            "https://api2.grab.com/trip-management"
-          ],
-          "timeoutAfter": 30
-        },
-        "notification": {
-          "endpoints": [
-            "https://api1.grab.com/notification",
-            "https://api2.grab.com/notification"
-          ],
-          "timeoutAfter":  30
-        }
-      }
     };
     setData(payload);
   }, []);
@@ -51,13 +25,14 @@ function App() {
         <p>
           Edit. <code>src/App.js</code> and save to reload.
         </p>
+        <LocationTracker />
         <a
           className="App-link"
           href="https://reactjs.org"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          Learn React {data.currentLocation.latitude} - {data.currentLocation.longitude}
         </a>
       </header>
     </div>
