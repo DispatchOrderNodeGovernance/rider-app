@@ -20,7 +20,7 @@ const LocationTracker = () => {
     const [error, setError] = useState(null);
     const initialPosition = useRef(null);
     const [distance, setDistance] = useState(0);
-    const serviceUrl = useRef('https://0xyshn92yf.execute-api.ap-southeast-1.amazonaws.com/production_stage/locations');
+    const serviceUrl = useRef('/locations');
     const inputUrl = useRef('');
 
     const sendLocationToServer = async (location) => {
@@ -112,7 +112,7 @@ const LocationTracker = () => {
     };
 
     const handleSetDefaultUrl = () => {
-        serviceUrl.current = 'https://0xyshn92yf.execute-api.ap-southeast-1.amazonaws.com/production_stage/locations';
+        serviceUrl.current = '/locations';
     };
 
     return (
