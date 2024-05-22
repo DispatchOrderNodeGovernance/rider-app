@@ -11,7 +11,7 @@ export async function onRequestPost(context) {
             body: JSON.stringify({ driver_id, status, in_trip, latitude, longitude }),
             timeout: 20,
         });
-        return new Response(await response.json());
+        return new Response(await response.text(), {status: response.status});
     }catch(e){
         return new Response({error: e.message}, {status: 500});
     }
