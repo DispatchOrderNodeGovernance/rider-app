@@ -15,6 +15,7 @@ export async function onRequestPost(context) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+            action: "dispatch",
             uuid: uuid,
             pickup_location: pickupLocation,
             dropoff_location: dropoffLocation,
