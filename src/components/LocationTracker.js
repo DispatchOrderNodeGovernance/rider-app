@@ -14,7 +14,7 @@ const getDistanceFromLatLonInMeters = (lat1, lon1, lat2, lon2) => {
     return distance;
 };
 
-const LocationTracker = () => {
+const LocationTracker = ({ onLocationUpdate }) => {
     const [position, setPosition] = useState(null);
     const [lastTracked, setLastTracked] = useState(null);
     const [error, setError] = useState(null);
@@ -23,7 +23,7 @@ const LocationTracker = () => {
     const serviceUrl = useRef('/locations');
     const inputUrl = useRef('');
 
-    const sendLocationToServer = async (location) => {
+/*     const sendLocationToServer = async (location) => {
         try {
             const response = await fetch(serviceUrl.current, {
                 method: 'POST',
@@ -43,7 +43,8 @@ const LocationTracker = () => {
             console.error('Error sending location to server:', error);
             setError(`Error sending location: ${error.message}`);
         }
-    };
+    }; */
+
     useEffect(() => {
         const handleSuccess = (pos) => {
             setLastTracked(new Date().toLocaleString());
@@ -52,12 +53,17 @@ const LocationTracker = () => {
             if (!initialPosition.current) {
                 initialPosition.current = { latitude, longitude };
                 setPosition({ latitude, longitude });
+
                 // Send the initial position to the server immediately
-                sendLocationToServer({
-                    "driver_id": "driver_123",
-                    "status": "in_trip",
+                const locationData = {
+                    // driver_id: "driver_123",
+                    // status: "in_trip",
                     latitude, longitude
-                });
+                };
+                // sendLocationToServer(locationData);
+
+                // Emit the location to the parent component
+                onLocationUpdate(locationData);
 
                 return;
             }
@@ -72,11 +78,17 @@ const LocationTracker = () => {
 
             if (distance >= 100) {
                 alert('Moved 100 meters. Sending location to server...');
-                sendLocationToServer({
-                    "driver_id": "driver_123",
-                    "status": "in_trip",
-                    latitude, longitude
-                });
+                const locationData = {
+                    // driver_id: "driver_123",
+                    // status: "in_trip",
+                    latitude,
+                    longitude
+                };
+                // sendLocationToServer(locationData);
+
+                // Emit the location to the parent component
+                onLocationUpdate(locationData);
+
                 initialPosition.current = { latitude, longitude };
             }
         };
@@ -101,7 +113,7 @@ const LocationTracker = () => {
         checkPosition();
 
         return () => clearInterval(intervalId);
-    }, []);
+    }, [onLocationUpdate]);
 
     const handleUrlChange = (e) => {
         inputUrl.current = e.target.value;
@@ -120,7 +132,6 @@ const LocationTracker = () => {
             <h1>Location Tracker</h1>
             {position ? (
                 <p>
-                    Current Position: Latitude {position.latitude}, Longitude {position.longitude}<br />
                     Last tracked: {lastTracked} <br />
                     Distance from initial position: {distance} meters
                 </p>
@@ -145,3 +156,4 @@ const LocationTracker = () => {
 };
 
 export default LocationTracker;
+// <LocationTracker onLocationUpdate={handleLocationUpdate} />
