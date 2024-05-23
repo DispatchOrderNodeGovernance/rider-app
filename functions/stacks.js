@@ -1,4 +1,4 @@
-export async function onRequestPost(context) {
+export async function onRequestGet() {
     const cache = caches.default;
     const cacheKey = new Request("https://0xyshn92yf.execute-api.ap-southeast-1.amazonaws.com/production_stage/stacks");
 
