@@ -1,6 +1,7 @@
 export async function onRequestPost(context) {
     let body = await context.request.json();
     let {
+        stack_id: stackId,
         pickup_location: pickupLocation,
         dropoff_location: dropoffLocation,
         ride_type: rideType
@@ -16,6 +17,7 @@ export async function onRequestPost(context) {
         },
         body: JSON.stringify({
             action: "dispatch",
+            stack_id: stackId,
             uuid: uuid,
             pickup_location: pickupLocation,
             dropoff_location: dropoffLocation,
