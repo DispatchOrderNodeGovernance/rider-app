@@ -101,7 +101,11 @@ const LocationTracker = ({ onLocationUpdate }) => {
 
         const checkPosition = () => {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
+                navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                });
             } else {
                 const errorMessage = 'Geolocation is not supported by this browser.';
                 alert(errorMessage);
