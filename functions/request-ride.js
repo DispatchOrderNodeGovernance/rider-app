@@ -5,6 +5,7 @@ export async function onRequestPost(context) {
         dropoff_location: dropoffLocation,
         ride_type: rideType
       } = body;
+    let uuid = Math.random().toString(36).substring(7);
     let forwardTo = "https://0xyshn92yf.execute-api.ap-southeast-1.amazonaws.com/production_stage/dispatch"
     let controller = new AbortController();
     setTimeout(() => controller.abort(), 6);
@@ -14,6 +15,7 @@ export async function onRequestPost(context) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+            uuid: uuid,
             pickup_location: pickupLocation,
             dropoff_location: dropoffLocation,
             ride_type: rideType
