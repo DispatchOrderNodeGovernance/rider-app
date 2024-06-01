@@ -1,7 +1,8 @@
 ```
-🔍 Search the Grab app   📷 Barcode 
+| 🔍 Search the Grab app             |              ⛶ Scan |
 
-| 🍽️ Food   |    🛒 Mart    |   🚗 Car    |    📦 Express |
+
+| 🍽️ Food   |    🛒 Mart    |   🚗 Car    |    📦 Express  |
 
 💰 $500.80    💎 3,800
 
